@@ -1,3 +1,4 @@
+import assert from "node:assert/strict";
 import puppeteer from "puppeteer-core";
 const CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
 const B = "http://localhost:3210";
@@ -37,4 +38,5 @@ const [alice, bob] = await Promise.all([checkIn("Alice Whitmore"), checkIn("Bob 
 console.log("Alice's pass shows:", alice.who);
 console.log("Bob's pass shows:  ", bob.who);
 console.log("Isolated correctly:", alice.who.includes("Alice") && bob.who.includes("Bob"));
+assert.ok(alice.who.includes("Alice") && bob.who.includes("Bob"), "Visitors stay isolated");
 await b.close();

@@ -15,6 +15,8 @@
  * Nobody is required to pick a truthful one and nobody is asked to prove it.
  */
 export type BoardingStatus =
+  | "PRIVATE"
+  | "UNSURE"
   | "ON_TIME"
   | "DELAYED"
   | "STANDBY"
@@ -25,11 +27,13 @@ export const BOARDING_STATUS: Record<
   BoardingStatus,
   { label: string; plain: string; blurb: string; tone: string; order: number }
 > = {
+  PRIVATE: { label: "Private", plain: "I’d rather discuss it privately", blurb: "No timeline needed. Share only what feels right, when it feels right.", tone: "blue", order: 5 },
+  UNSURE: { label: "Uncertain", plain: "I don’t know", blurb: "Uncertainty belongs here too. You can change this any time.", tone: "violet", order: 6 },
   ON_TIME: {
     label: "On Time",
     plain: "No departure date on the books",
     blurb:
-      "Old, not going anywhere. Knees complain, heart's fine. Here for the long haul, however long that turns out to be.",
+      "No known timeline. Here for connection, at my own pace.",
     tone: "green",
     order: 0,
   },
@@ -174,12 +178,12 @@ export type Match = {
   archived: boolean;
 };
 
-/** Emergency contact. Every passenger flies with one. */
+/** Optional demo emergency contact. Nobody is contacted by the app. */
 export type GroundCrew = {
   name: string;
   relationship: string;
   phone: string;
-  /** Auto-share layover plans with them. On by default, and it stays on unless changed. */
+  /** Show a reminder to share plans manually. */
   shareLayovers: boolean;
 };
 

@@ -33,7 +33,7 @@ export async function createProfile(form: FormData) {
     city: String(form.get("city") || "Ann Arbor, MI"),
     seed: Math.floor(Math.random() * 90) + 1,
     gate: `A${Math.floor(Math.random() * 24) + 1}`,
-    status: (String(form.get("status") || "ON_TIME") as BoardingStatus),
+    status: (String(form.get("status") || "PRIVATE") as BoardingStatus),
     runway: String(form.get("runway") || ""),
     mobility: (String(form.get("mobility") || "WALKING") as Mobility),
     intents: form.getAll("intents").map(String) as Intent[],
@@ -68,7 +68,7 @@ export async function createProfile(form: FormData) {
       name: crewName,
       relationship: String(form.get("crewRelationship") || ""),
       phone: String(form.get("crewPhone") || ""),
-      shareLayovers: form.get("crewShare") !== "off",
+      shareLayovers: form.get("crewShare") === "on",
     };
   }
 
@@ -145,6 +145,10 @@ export async function updatePreflight(form: FormData) {
 
 export async function setGroundCrew(form: FormData) {
   await mutate((store) => {
+    if (!String(form.get("crewName") || "").trim()) {
+      store.groundCrew = null;
+      return;
+    }
     store.groundCrew = {
       name: String(form.get("crewName") || ""),
       relationship: String(form.get("crewRelationship") || ""),

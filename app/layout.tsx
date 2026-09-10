@@ -5,9 +5,9 @@ import { read } from "@/lib/store";
 import { Nav } from "@/components/nav";
 
 export const metadata: Metadata = {
-  title: "Terminal — a dating app for the last chapter",
+  title: "Terminal — connection for the time you have",
   description:
-    "Company, romance and honest conversation for people who are old, ill, or out of time. Departures only.",
+    "Company, romance and shared wishes, at your own pace. An interactive dating-app demo.",
 };
 
 export const viewport: Viewport = {
@@ -52,7 +52,15 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           </div>
         </header>
 
-        <main className="shell">{children}</main>
+        <main className="shell">
+          <p className="note small" style={{ marginTop: 20 }}>
+            <strong>Interactive demo.</strong> All 16 passengers are fictional;
+            matches are simulated and replies are scripted. Use fictional personal
+            and health details. Your demo stays in this browser; lounge posts are
+            not shared with other visitors. Clear it any time on My Pass.
+          </p>
+          {children}
+        </main>
 
         {me && <Nav unread={unread} />}
       </body>

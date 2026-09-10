@@ -19,11 +19,11 @@ export default async function Landing() {
           <Flap text="TERMINAL" />
         </div>
         <h1 style={{ fontFamily: "var(--serif)", fontWeight: 400, fontSize: "1.5rem", maxWidth: 620, margin: "0 auto" }}>
-          A dating app for people who are old, ill, or out of time.
+          Connection for the time you have.
         </h1>
         <p className="mute" style={{ maxWidth: 560, margin: "0 auto" }}>
-          Everyone here knows roughly how the story ends. That turns out to remove
-          most of the nonsense from dating and almost none of the point of it.
+          Company, romance and things to look forward to, through aging, illness
+          and uncertainty. Start with what you want to do together.
         </p>
         <div className="row wrap" style={{ justifyContent: "center", marginTop: 18 }}>
           {me ? (
@@ -45,7 +45,7 @@ export default async function Landing() {
 
       <section className="stack">
         <div className="row-between wrap">
-          <Kicker>Departures · {board.length} passengers in your area</Kicker>
+          <Kicker>Departures · {board.length} fictional passengers</Kicker>
           <span className="mono small mute">
             {new Date().toLocaleDateString([], { weekday: "short", day: "numeric", month: "short" })}
           </span>
@@ -81,9 +81,8 @@ export default async function Landing() {
       <section className="stack">
         <Kicker>Boarding status</Kicker>
         <p className="mute" style={{ maxWidth: 640 }}>
-          Every other dating app asks you to be aspirational. This one asks you to
-          be accurate. One field, five options, nobody has to prove anything —
-          and everyone gets to decide for themselves what they can carry today.
+          Share where you are today, if you want to. Private and uncertain are
+          welcome answers. No prognosis required; change your status any time.
         </p>
         <div className="grid-2">
           {(Object.keys(BOARDING_STATUS) as BoardingStatus[]).map((s) => (
@@ -102,13 +101,12 @@ export default async function Landing() {
         <div className="panel stack">
           <div className="panel-head">Shared itineraries</div>
           <p className="mute small" style={{ margin: 0 }}>
-            You match on what you both still want to do, not on whether you both
-            like dogs. A bucket list is the most honest compatibility signal
-            anyone has ever built a dating app on.
+            Match around shared wishes, from Sunday lunch and quiet coffee to
+            adventures. Everyday moments belong on your itinerary too.
           </p>
         </div>
         <div className="panel stack">
-          <div className="panel-head">Layovers, not dates</div>
+          <div className="panel-head">Layovers · Plan a date</div>
           <p className="mute small" style={{ margin: 0 }}>
             Plans built around what two specific bodies can actually do — good
             days, bad weeks, wheelchairs, hospital wards. Nobody suggests a hike.
@@ -117,9 +115,8 @@ export default async function Landing() {
         <div className="panel stack">
           <div className="panel-head">Pre-flight check</div>
           <p className="mute small" style={{ margin: 0 }}>
-            Testing status and immune risk stated plainly on the pass. There is a
-            widespread idea that this stops mattering at seventy. The only thing
-            that stops mattering is pregnancy.
+            Optional health details and boundaries, in plain language. Leave any
+            field blank when you would rather discuss it privately.
           </p>
         </div>
       </section>
@@ -129,11 +126,11 @@ export default async function Landing() {
         conversations are scripted. The design questions underneath it — how to
         let someone state their runway without a medical form, how to plan a date
         around two people&apos;s energy, who gets called if a meeting goes wrong —
-        are the real work, and those are all implemented.
+        guide the concept. No real meetings, emergency calls or contact notifications are arranged.
       </section>
 
       <p className="center mono small mute" style={{ paddingBottom: 40 }}>
-        TERMINAL · EVERY FLIGHT HAS A DEPARTURE TIME · WE JUST PUT IT ON THE BOARD
+        TERMINAL · ROOM FOR ORDINARY DAYS
       </p>
     </div>
   );

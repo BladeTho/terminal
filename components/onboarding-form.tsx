@@ -14,6 +14,8 @@ import { Field, StatusPill, Kicker } from "@/components/ui";
 
 /** Popular destinations, so a new passenger can match on day one. */
 const SUGGESTED = [
+  "Have coffee somewhere quiet",
+  "Watch a terrible movie together",
   "See the northern lights",
   "Eat oysters somewhere they were pulled that morning",
   "Hear live music one more time, even badly played",
@@ -43,7 +45,7 @@ const STEPS = [
 
 export function OnboardingForm() {
   const [step, setStep] = useState(0);
-  const [status, setStatus] = useState<BoardingStatus>("ON_TIME");
+  const [status, setStatus] = useState<BoardingStatus>("PRIVATE");
   const [mobility, setMobility] = useState<Mobility>("WALKING");
   const [intents, setIntents] = useState<Intent[]>(["COMPANY"]);
   const [items, setItems] = useState<string[]>([]);
@@ -103,9 +105,9 @@ export function OnboardingForm() {
       <section hidden={step !== 1} className="stack">
         <h2>What&apos;s your boarding status?</h2>
         <p className="mute">
-          This is the hardest question on here and we&apos;ve put it second on
-          purpose. Nobody checks it and you can change it any time. It exists so
-          that neither of you has to work it out over three weeks of texting.
+          Optional · Describe where you are today, if you want to. You never need
+          to estimate how much time you have. Choose private or uncertain, and
+          change your choice any time on My Pass.
         </p>
         <div className="stack" style={{ gap: 10 }}>
           {(Object.keys(BOARDING_STATUS) as BoardingStatus[]).map((s) => (
@@ -165,7 +167,7 @@ export function OnboardingForm() {
         </div>
         <Field
           label="When are you at your best?"
-          hint="Real scheduling information. People will plan around it, and it saves you cancelling."
+          hint="Energy, rest breaks, transport or access needs. Changing or cancelling plans is always okay."
         >
           <input
             name="goodDays"
@@ -202,9 +204,8 @@ export function OnboardingForm() {
       <section hidden={step !== 4} className="stack">
         <h2>Your itinerary.</h2>
         <p className="mute">
-          The things you still want to do. This is what we match on — two people
-          who both want to see the northern lights have more to work with than
-          two people who both like long walks.
+          The things you want to do together. Quiet coffee and an afternoon outside
+          count just as much as a big adventure. Shared wishes help us suggest matches.
         </p>
         <input type="hidden" name="itinerary" value={items.join("\n")} />
         <div className="row wrap" style={{ gap: 8 }}>
@@ -281,14 +282,12 @@ export function OnboardingForm() {
       <section hidden={step !== 6} className="stack">
         <h2>Pre-flight check.</h2>
         <div className="note">
-          There&apos;s a common idea that none of this matters once pregnancy is
-          off the table. Pregnancy is the <em>only</em> risk that retires. STIs
-          don&apos;t check anyone&apos;s age, and a good number of people on here
-          are immunocompromised — for them, a cold you&apos;d shrug off is a
-          hospital admission. So it goes on the pass, stated plainly, and then
-          nobody has to have an awkward conversation at the wrong moment.
+          Optional · Health &amp; boundaries. These details appear on your own
+          demo pass in this browser; no other visitor can see them. Use fictional
+          details, and skip anything you prefer to discuss privately. Accessibility
+          and scheduling needs belong in Getting about.
         </div>
-        <Field label="Last STI panel" hint="Optional. Blank reads as 'haven't, or won't say' — which is an allowed answer.">
+        <Field label="Last STI panel" hint="Optional. Blank reads as 'Testing not stated'.">
           <input name="lastTested" type="date" className="input" />
         </Field>
         <Field label="Anything you'd rather state up front" hint="One per line. Shown on your pass exactly as you write it.">
@@ -304,7 +303,7 @@ export function OnboardingForm() {
             <span>
               <div className="choice-title">I&apos;m immunocompromised</div>
               <div className="choice-blurb">
-                Shown to matches so they know to be honest when they&apos;re unwell.
+                An optional detail for your demo pass.
               </div>
             </span>
             <input type="checkbox" name="immunocompromised" />
@@ -312,9 +311,9 @@ export function OnboardingForm() {
           <label className="switch">
             <span>
               <div className="choice-title">My vaccinations are current</div>
-              <div className="choice-blurb">Matters enormously to the people above.</div>
+              <div className="choice-blurb">Leave unchecked to keep this unstated.</div>
             </span>
-            <input type="checkbox" name="vaccinesCurrent" defaultChecked />
+            <input type="checkbox" name="vaccinesCurrent" />
           </label>
         </div>
         <Field label="Your note on all this">
@@ -331,9 +330,9 @@ export function OnboardingForm() {
       <section hidden={step !== 7} className="stack">
         <h2>Ground crew.</h2>
         <p className="mute">
-          One person who knows where you are. On a normal dating app this is a
-          safety feature. On this one it&apos;s also the person we&apos;d want to
-          hear from if you stopped answering — and that happens here.
+          Optional emergency contact · Use a fictional name and number here.
+          This demo stores a reminder only. It never sends messages, calls anyone,
+          monitors your wellbeing or provides emergency assistance. Skip this step freely.
         </p>
         <Field label="Their name">
           <input name="crewName" className="input" placeholder="Kirsten" />
@@ -349,13 +348,12 @@ export function OnboardingForm() {
         <div className="panel">
           <label className="switch">
             <span>
-              <div className="choice-title">Send them my layover plans</div>
+              <div className="choice-title">Remind me to share my date plans</div>
               <div className="choice-blurb">
-                Where you&apos;re going, who with, and when you expect to be home.
-                On by default. You can turn it off — we&apos;d rather you didn&apos;t.
+                You choose whether and how to share a plan yourself.
               </div>
             </span>
-            <input type="checkbox" name="crewShare" defaultChecked />
+            <input type="checkbox" name="crewShare" />
           </label>
         </div>
       </section>

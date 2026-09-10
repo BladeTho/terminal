@@ -1,3 +1,4 @@
+import assert from "node:assert/strict";
 import puppeteer from "puppeteer-core";
 const CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
 const B = "http://localhost:3210";
@@ -31,6 +32,9 @@ const step = () => page.evaluate(() => document.querySelector(".kicker")?.textCo
 
 await page.goto(`${B}/onboarding`, { waitUntil: "networkidle0" });
 
+assert.match(await page.$eval("main", el => el.innerText), /All 16 passengers are fictional/);
+assert.equal(await page.$eval('input[name="status"]:checked', el => el.value), "PRIVATE");
+assert.equal(await page.$eval('input[name="crewShare"]', el => el.checked), false);
 await fill('input[name="name"]', "Eleanor Vance");
 await fill('input[name="age"]', "73");
 await tap("button.btn-primary");                                  // -> 2
@@ -83,5 +87,12 @@ await wait(1600);
 const after = await page.$$eval(".bubble", (e) => e.length);
 console.log(`bubbles ${before} -> ${after} (sent + auto-reply)`);
 
-console.log("JS errors:", errs.length ? errs : "none");
+assert.equal(after, before + 2, "Message and scripted reply persist");
+assert.equal(errs.length, 0, errs.join("\n"));
+const cookie = (await page.cookies()).find(c => c.name === "terminal_state");
+assert.ok(cookie.value.startsWith("z."));
+assert.ok(cookie.value.length <= 3800);
+await page.reload({ waitUntil: "networkidle0" });
+assert.equal(await page.$$eval(".bubble", e => e.length), after);
+console.log("Assertions passed: demo notice, private default, contact opt-in, chat persistence, cookie budget, no JS errors");
 await b.close();

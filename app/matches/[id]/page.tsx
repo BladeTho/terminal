@@ -103,7 +103,7 @@ export default async function Thread({ params }: { params: Promise<{ id: string 
         </button>
       </form>
       <p className="small mute center">
-        Archiving keeps everything. Nothing on Terminal is ever deleted by us.
+        Archiving hides this match. This demo keeps only your 40 most recent messages across chats.
       </p>
     </div>
   );

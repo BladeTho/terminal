@@ -21,7 +21,7 @@ export function PassengerCard({
         <span>
           Gate {p.gate} · {p.city.split(",")[0]}
         </span>
-        <span>{p.verified ? "✓ Verified" : "Unverified"}</span>
+        <span>{p.id === "me" ? "Your demo pass" : "Fictional passenger"}</span>
       </div>
 
       <div className="pass-body stack">
@@ -135,7 +135,7 @@ export function PassengerCard({
                 </span>
               )}
               <span className="tag tag-paper">
-                {p.preflight.vaccinesCurrent ? "Vaccinations current" : "Vaccinations not current"}
+                {p.preflight.vaccinesCurrent ? "Vaccinations current" : "Vaccinations not stated"}
               </span>
               {p.preflight.disclosures.map((d) => (
                 <span key={d} className="tag tag-paper">

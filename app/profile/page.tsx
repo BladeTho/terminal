@@ -39,7 +39,7 @@ export default async function Profile() {
             <label className="switch">
               <span>
                 <div className="choice-title">Large type</div>
-                <div className="choice-blurb">On by default. We know who&apos;s using this.</div>
+                <div className="choice-blurb">On by default for comfortable reading.</div>
               </span>
               <input type="checkbox" name="largeType" defaultChecked={s.largeType} />
             </label>
@@ -104,7 +104,7 @@ export default async function Profile() {
       <section className="panel stack">
         <div className="panel-head">Your details</div>
         <form action={updateProfile} className="stack">
-          <Field label="Boarding status" hint="Change this whenever it changes. People check.">
+          <Field label="Boarding status" hint="Optional. Private and uncertain are welcome; change it any time.">
             <select name="status" className="select" defaultValue={me.status}>
               {(Object.keys(BOARDING_STATUS) as BoardingStatus[]).map((k) => (
                 <option key={k} value={k}>
@@ -158,9 +158,9 @@ export default async function Profile() {
       <section className="panel stack">
         <div className="panel-head">Pre-flight check</div>
         <p className="small mute" style={{ margin: 0 }}>
-          Pregnancy is the only risk that retires. Everything else on this panel
-          still applies, and for the immunocompromised people on here it applies
-          harder than it ever did.
+          Optional health &amp; boundaries. These details appear only on your demo
+          pass in this browser. Use fictional details; leave fields blank to keep
+          them unstated. Edit or remove them here any time.
         </p>
         <form action={updatePreflight} className="stack">
           <Field label="Last STI panel">
@@ -205,8 +205,8 @@ export default async function Profile() {
       <section className="panel stack">
         <div className="panel-head">Ground crew</div>
         <p className="small mute" style={{ margin: 0 }}>
-          The person who knows where you are. Also the person we&apos;d want to
-          hear from if you stopped answering.
+          Optional emergency contact. Use fictional details. Nobody is contacted
+          or monitored. Clear the name and save to remove this contact.
         </p>
         <form action={setGroundCrew} className="stack">
           <Field label="Name">
@@ -226,10 +226,10 @@ export default async function Profile() {
           </div>
           <label className="switch">
             <span>
-              <div className="choice-title">Send them my layover plans</div>
-              <div className="choice-blurb">Where, who with, and when you expect to be back.</div>
+              <div className="choice-title">Remind me to share my date plans</div>
+              <div className="choice-blurb">A reminder only. Share plans yourself if you choose.</div>
             </span>
-            <input type="checkbox" name="crewShare" defaultChecked={store.groundCrew?.shareLayovers ?? true} />
+            <input type="checkbox" name="crewShare" defaultChecked={store.groundCrew?.shareLayovers ?? false} />
           </label>
           <button className="btn btn-primary">Save ground crew</button>
         </form>

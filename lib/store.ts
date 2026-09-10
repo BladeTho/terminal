@@ -1,3 +1,4 @@
+import { deflateSync, inflateSync } from "node:zlib";
 import { cookies } from "next/headers";
 import type { Store, Settings, LoungePost } from "./types";
 import { PASSENGERS, LOUNGE_SEED } from "./seed";
@@ -27,7 +28,7 @@ const DEFAULT_SETTINGS: Settings = {
   largeType: true,
   highContrast: false,
   lowSpoons: false,
-  statusFilter: ["ON_TIME", "DELAYED", "STANDBY", "BOARDING", "FINAL_CALL"],
+  statusFilter: ["PRIVATE", "UNSURE", "ON_TIME", "DELAYED", "STANDBY", "BOARDING", "FINAL_CALL"],
   maxDistance: 60,
 };
 
@@ -80,7 +81,10 @@ export async function read(): Promise<Store> {
     const jar = await cookies();
     const raw = jar.get(COOKIE)?.value;
     if (!raw) return expand(blankPersisted());
-    const parsed = JSON.parse(Buffer.from(raw, "base64url").toString("utf8")) as Persisted;
+    const decoded = raw.startsWith("z.")
+      ? inflateSync(Buffer.from(raw.slice(2), "base64url"), { maxOutputLength: 128 * 1024 })
+      : Buffer.from(raw, "base64url");
+    const parsed = JSON.parse(decoded.toString("utf8")) as Persisted;
     return expand(parsed);
   } catch {
     return expand(blankPersisted());
@@ -91,7 +95,15 @@ export async function read(): Promise<Store> {
  *  writing cookies during render, so this must never run from a page. */
 export async function write(store: Store): Promise<void> {
   const jar = await cookies();
-  const value = Buffer.from(JSON.stringify(narrow(store)), "utf8").toString("base64url");
+  const payload = Buffer.from(JSON.stringify(narrow(store)), "utf8");
+  if (payload.byteLength > 128 * 1024) {
+    throw new Error("Demo storage is full. Shorten your entry or clear the demo on My Pass.");
+  }
+  const value = "z." + deflateSync(payload).toString("base64url");
+  // Reserve room for the cookie name and attributes. Never silently lose a write.
+  if (Buffer.byteLength(value) > 3800) {
+    throw new Error("Demo storage is full. Shorten your entry or clear the demo on My Pass.");
+  }
   jar.set(COOKIE, value, {
     httpOnly: true,
     sameSite: "lax",

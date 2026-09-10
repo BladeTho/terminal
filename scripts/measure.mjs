@@ -8,7 +8,7 @@ const browser = await puppeteer.launch({ executablePath: CHROME, headless: "new"
 for (const path of pages) {
   const page = await browser.newPage();
   await page.setViewport({ width, height: 900 });
-  await page.goto(`http://localhost:3111${path}`, { waitUntil: "networkidle0" });
+  await page.goto(`http://127.0.0.1:3210${path}`, { waitUntil: "networkidle0" });
   const result = await page.evaluate((w) => {
     const offenders = [];
     for (const el of document.querySelectorAll("*")) {

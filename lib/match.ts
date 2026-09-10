@@ -19,7 +19,7 @@ export type MeetingMode = "OUT" | "VISIT" | "REMOTE";
 export function meetingMode(a: Mobility, b: Mobility): MeetingMode {
   const r = Math.min(MOBILITY[a].radius, MOBILITY[b].radius);
   if (r >= 3) return "OUT";
-  if (r >= 1) return "VISIT";
+  if (r >= 1 && Math.max(MOBILITY[a].radius, MOBILITY[b].radius) >= 3) return "VISIT";
   return "REMOTE";
 }
 
@@ -68,7 +68,7 @@ export function compat(me: Passenger, them: Passenger): Compat {
       `You're both here for ${sharedIntents.map((i) => INTENT[i].label.toLowerCase()).slice(0, 2).join(" and ")}`
     );
   if (miles <= 12) reasons.push(`${miles} miles apart`);
-  if (them.verified) reasons.push("Verified by a video call with our team");
+
 
   const caveats: string[] = [];
   if (mode === "REMOTE")
@@ -80,7 +80,7 @@ export function compat(me: Passenger, them: Passenger): Compat {
   if (them.status === "FINAL_CALL")
     caveats.push("Final Call. Be honest with yourself about whether you can start something here.");
   if (them.preflight.immunocompromised)
-    caveats.push("Immunocompromised — a cold you'd shrug off is a hospital stay for them.");
+    caveats.push("Has shared that they are immunocompromised. Discuss visit preferences together.");
   if (miles > 45) caveats.push(`${miles} miles is a real drive for both of you.`);
 
   return { score: Math.round(score), sharedItinerary, sharedIntents, miles, mode, reasons, caveats };
@@ -102,7 +102,7 @@ export function layoverIdeas(me: Passenger, them: Passenger): string[] {
   if (mode === "OUT") {
     out.push(
       "Matinee film — cheaper, quieter, and you're home before the tiredness lands",
-      "Botanical garden on a weekday. Benches every forty feet",
+      "Quiet garden visit — check step-free access and seating together",
       "Split one good lunch instead of two mediocre dinners",
       "Drive somewhere with a view and don't get out of the car"
     );

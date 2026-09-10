@@ -26,6 +26,7 @@ export function Composer({
 
   return (
     <>
+      <p className="small mute">Fictional passenger · Scripted replies. No real person receives these messages.</p>
       {!hasSpoken && (
         <div className="panel stack" style={{ gap: 10, marginBottom: 16 }}>
           <div className="panel-head">Openers</div>
