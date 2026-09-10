@@ -20,8 +20,8 @@ import {
 
 export const dynamic = "force-dynamic";
 
-export default function Profile() {
-  const store = read();
+export default async function Profile() {
+  const store = await read();
   if (!store.me) redirect("/onboarding");
   const me = store.me;
   const s = store.settings;

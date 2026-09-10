@@ -18,8 +18,8 @@ export const viewport: Viewport = {
 
 export const dynamic = "force-dynamic";
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
-  const store = read();
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const store = await read();
   const { settings, me } = store;
   const unread = store.matches.filter((m) => {
     if (m.archived) return false;

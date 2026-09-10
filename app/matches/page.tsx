@@ -7,8 +7,8 @@ import { compat } from "@/lib/match";
 
 export const dynamic = "force-dynamic";
 
-export default function Matches() {
-  const store = read();
+export default async function Matches() {
+  const store = await read();
   if (!store.me) redirect("/onboarding");
   const me = store.me;
 

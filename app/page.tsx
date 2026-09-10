@@ -5,8 +5,8 @@ import { StatusPill, Flap, Kicker } from "@/components/ui";
 
 export const dynamic = "force-dynamic";
 
-export default function Landing() {
-  const { passengers, me } = read();
+export default async function Landing() {
+  const { passengers, me } = await read();
   const board = [...passengers].sort(
     (a, b) => BOARDING_STATUS[a.status].order - BOARDING_STATUS[b.status].order
   );

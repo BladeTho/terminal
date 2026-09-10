@@ -8,8 +8,8 @@ import { milesBetween } from "@/lib/match";
 
 export const dynamic = "force-dynamic";
 
-export default function Itinerary() {
-  const store = read();
+export default async function Itinerary() {
+  const store = await read();
   if (!store.me) redirect("/onboarding");
   const me = store.me;
 

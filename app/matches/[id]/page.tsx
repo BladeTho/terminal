@@ -14,7 +14,7 @@ export const dynamic = "force-dynamic";
 
 export default async function Thread({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const store = read();
+  const store = await read();
   if (!store.me) redirect("/onboarding");
   const me = store.me;
 

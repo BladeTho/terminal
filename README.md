@@ -10,8 +10,10 @@ npm install
 npm run dev      # http://localhost:3210
 ```
 
-No database, no API keys, no config. State lives in `data/store.json`, which is
-created on first run. `npm run reset` wipes it back to a fresh departures hall.
+No database, no API keys, no config. Each visitor's state lives in their own
+browser cookie — no file on disk, and nothing shared between visitors, so this
+is safe to deploy as a public link that many people open at once. Clear it from
+the Clear Everything button on the My Pass page, or clear cookies for the site.
 
 ---
 
@@ -109,7 +111,7 @@ lib/
   types.ts              domain model + all the status/intent copy
   seed.ts               16 passengers
   match.ts              compatibility, layover ideas, icebreakers
-  store.ts              JSON-file persistence (swap for Prisma here, one file)
+  store.ts              cookie-backed per-visitor persistence (swap for a real DB here, one file)
   actions.ts            every mutation, as server actions
 components/
   avatar.tsx            generative SVG portraits

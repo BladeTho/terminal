@@ -7,8 +7,8 @@ import { Kicker } from "@/components/ui";
 
 export const dynamic = "force-dynamic";
 
-export default function Gates() {
-  const store = read();
+export default async function Gates() {
+  const store = await read();
   if (!store.me) redirect("/onboarding");
 
   const seen = new Set(store.swipes.filter((s) => s.from === "me").map((s) => s.to));

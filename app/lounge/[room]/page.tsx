@@ -13,7 +13,7 @@ export default async function Room({ params }: { params: Promise<{ room: string 
   const room = LOUNGE_ROOMS.find((r) => r.id === roomId);
   if (!room) notFound();
 
-  const store = read();
+  const store = await read();
   if (!store.me) redirect("/onboarding");
   const me = store.me;
 

@@ -6,8 +6,8 @@ import { Kicker, timeAgo } from "@/components/ui";
 
 export const dynamic = "force-dynamic";
 
-export default function Lounge() {
-  const store = read();
+export default async function Lounge() {
+  const store = await read();
   if (!store.me) redirect("/onboarding");
 
   return (

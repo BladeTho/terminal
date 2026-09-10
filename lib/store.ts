@@ -1,15 +1,27 @@
-import fs from "node:fs";
-import path from "node:path";
-import type { Store, Settings } from "./types";
+import { cookies } from "next/headers";
+import type { Store, Settings, LoungePost } from "./types";
 import { PASSENGERS, LOUNGE_SEED } from "./seed";
 
 /**
- * File-backed store. No database to install, no migrations, survives restarts.
- * Every read/write goes through here, so swapping in Prisma later means
- * rewriting this one file and nothing else.
+ * Cookie-backed store — one visitor, one cookie, nothing shared on the server.
+ *
+ * This app is a public demo: many strangers can open it at once, and each
+ * one needs their own private passenger, matches and chats. A single shared
+ * file (the original local-only design) would mean the second visitor's
+ * check-in overwrites the first visitor's profile. A cookie makes every
+ * visitor's state theirs alone.
+ *
+ * Browsers cap a cookie around 4KB, so only the visitor's own data is ever
+ * persisted — `passengers` and the seed Lounge posts are static content from
+ * seed.ts and are re-attached on every read, never written to the cookie.
+ * (One consequence: the Lounge is no longer a space shared across real
+ * visitors, since nothing is shared server-side any more — each visitor sees
+ * the seed conversation plus their own posts. Fine for a demo; a real
+ * multi-user Lounge needs a database, not a cookie.)
  */
 
-const FILE = path.join(process.cwd(), "data", "store.json");
+const COOKIE = "terminal_state";
+const MAX_AGE = 60 * 60 * 24 * 180; // 180 days
 
 const DEFAULT_SETTINGS: Settings = {
   largeType: true,
@@ -19,49 +31,86 @@ const DEFAULT_SETTINGS: Settings = {
   maxDistance: 60,
 };
 
-function blank(): Store {
+/** The slice of Store that's actually specific to this visitor. */
+type Persisted = Pick<Store, "me" | "groundCrew" | "settings" | "swipes" | "matches" | "messages"> & {
+  /** Only posts this visitor wrote — the seed posts are re-attached on read. */
+  myLounge: LoungePost[];
+};
+
+function blankPersisted(): Persisted {
   return {
     me: null,
     groundCrew: null,
     settings: DEFAULT_SETTINGS,
-    passengers: PASSENGERS,
     swipes: [],
     matches: [],
     messages: [],
-    lounge: LOUNGE_SEED,
+    myLounge: [],
   };
 }
 
-export function read(): Store {
+function expand(p: Persisted): Store {
+  return {
+    me: p.me,
+    groundCrew: p.groundCrew,
+    settings: { ...DEFAULT_SETTINGS, ...p.settings },
+    passengers: PASSENGERS,
+    swipes: p.swipes,
+    matches: p.matches,
+    messages: p.messages,
+    lounge: [...p.myLounge, ...LOUNGE_SEED],
+  };
+}
+
+function narrow(store: Store): Persisted {
+  return {
+    me: store.me,
+    groundCrew: store.groundCrew,
+    settings: store.settings,
+    // Keep the cookie well under the ~4KB browser limit.
+    swipes: store.swipes,
+    matches: store.matches,
+    messages: store.messages.slice(-40),
+    myLounge: store.lounge.filter((p) => p.author === "me").slice(0, 20),
+  };
+}
+
+export async function read(): Promise<Store> {
   try {
-    const raw = fs.readFileSync(FILE, "utf8");
-    const parsed = JSON.parse(raw) as Store;
-    // Seed data is code, not data — always take the latest cast from seed.ts
-    // so editing a passenger's bio doesn't require wiping the store.
-    parsed.passengers = PASSENGERS;
-    parsed.settings = { ...DEFAULT_SETTINGS, ...parsed.settings };
-    return parsed;
+    const jar = await cookies();
+    const raw = jar.get(COOKIE)?.value;
+    if (!raw) return expand(blankPersisted());
+    const parsed = JSON.parse(Buffer.from(raw, "base64url").toString("utf8")) as Persisted;
+    return expand(parsed);
   } catch {
-    const fresh = blank();
-    write(fresh);
-    return fresh;
+    return expand(blankPersisted());
   }
 }
 
-export function write(store: Store): void {
-  fs.mkdirSync(path.dirname(FILE), { recursive: true });
-  fs.writeFileSync(FILE, JSON.stringify(store, null, 2), "utf8");
+/** Only callable from a Server Action or Route Handler — Next forbids
+ *  writing cookies during render, so this must never run from a page. */
+export async function write(store: Store): Promise<void> {
+  const jar = await cookies();
+  const value = Buffer.from(JSON.stringify(narrow(store)), "utf8").toString("base64url");
+  jar.set(COOKIE, value, {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+    path: "/",
+    maxAge: MAX_AGE,
+  });
 }
 
-export function mutate<T>(fn: (store: Store) => T): T {
-  const store = read();
+export async function mutate<T>(fn: (store: Store) => T): Promise<T> {
+  const store = await read();
   const result = fn(store);
-  write(store);
+  await write(store);
   return result;
 }
 
-export function reset(): void {
-  write(blank());
+export async function reset(): Promise<void> {
+  const jar = await cookies();
+  jar.delete(COOKIE);
 }
 
 export const uid = (prefix: string) =>

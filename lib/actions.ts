@@ -59,7 +59,7 @@ export async function createProfile(form: FormData) {
     joinedAt: now(),
   };
 
-  const store = read();
+  const store = await read();
   store.me = me;
 
   const crewName = String(form.get("crewName") || "").trim();
@@ -76,13 +76,13 @@ export async function createProfile(form: FormData) {
   // and this one is depressing enough on the way in.
   seedOpeningMatches(store);
 
-  write(store);
+  await write(store);
   revalidatePath("/", "layout");
   redirect("/gates");
 }
 
 /** Two people have already ticketed you before you finished signing up. */
-function seedOpeningMatches(store: ReturnType<typeof read>) {
+function seedOpeningMatches(store: Awaited<ReturnType<typeof read>>) {
   const me = store.me!;
   const candidates = store.passengers
     .map((p) => ({ p, c: compat(me, p) }))
@@ -112,7 +112,7 @@ function openingLine(them: Passenger, me: Passenger): string {
 }
 
 export async function updateProfile(form: FormData) {
-  mutate((store) => {
+  await mutate((store) => {
     if (!store.me) return;
     store.me.bio = String(form.get("bio") ?? store.me.bio);
     store.me.status = String(form.get("status") ?? store.me.status) as BoardingStatus;
@@ -127,7 +127,7 @@ export async function updateProfile(form: FormData) {
 }
 
 export async function updatePreflight(form: FormData) {
-  mutate((store) => {
+  await mutate((store) => {
     if (!store.me) return;
     store.me.preflight = {
       lastTested: String(form.get("lastTested") || "") || null,
@@ -144,7 +144,7 @@ export async function updatePreflight(form: FormData) {
 }
 
 export async function setGroundCrew(form: FormData) {
-  mutate((store) => {
+  await mutate((store) => {
     store.groundCrew = {
       name: String(form.get("crewName") || ""),
       relationship: String(form.get("crewRelationship") || ""),
@@ -156,7 +156,7 @@ export async function setGroundCrew(form: FormData) {
 }
 
 export async function updateSettings(form: FormData) {
-  mutate((store) => {
+  await mutate((store) => {
     const filter = form.getAll("statusFilter").map(String) as BoardingStatus[];
     store.settings = {
       largeType: form.get("largeType") === "on",
@@ -172,7 +172,7 @@ export async function updateSettings(form: FormData) {
 /* ---------------- the deck ---------------- */
 
 export async function swipe(toId: string, direction: Direction) {
-  const matched = mutate((store) => {
+  const matched = await mutate((store) => {
     if (!store.me) return false;
     store.swipes.push({ from: "me", to: toId, direction, at: now() });
     if (direction === "PASS") return false;
@@ -208,7 +208,7 @@ export async function swipe(toId: string, direction: Direction) {
 }
 
 export async function undoLastSwipe() {
-  mutate((store) => {
+  await mutate((store) => {
     for (let i = store.swipes.length - 1; i >= 0; i--) {
       if (store.swipes[i].from === "me") {
         const [undone] = store.swipes.splice(i, 1);
@@ -231,7 +231,7 @@ export async function sendMessage(matchId: string, body: string) {
   const clean = body.trim();
   if (!clean) return;
 
-  mutate((store) => {
+  await mutate((store) => {
     store.messages.push({ id: uid("msg"), matchId, from: "me", body: clean, at: now() });
 
     // The other person replies. This is a demo without a second human in it —
@@ -267,7 +267,7 @@ function reply(them: Passenger, incoming: string): string {
 }
 
 export async function setLayover(matchId: string, form: FormData) {
-  mutate((store) => {
+  await mutate((store) => {
     const m = store.matches.find((x) => x.id === matchId);
     if (!m) return;
     m.layover = {
@@ -280,7 +280,7 @@ export async function setLayover(matchId: string, form: FormData) {
 }
 
 export async function clearLayover(matchId: string) {
-  mutate((store) => {
+  await mutate((store) => {
     const m = store.matches.find((x) => x.id === matchId);
     if (m) m.layover = null;
   });
@@ -288,7 +288,7 @@ export async function clearLayover(matchId: string) {
 }
 
 export async function archiveMatch(matchId: string) {
-  mutate((store) => {
+  await mutate((store) => {
     const m = store.matches.find((x) => x.id === matchId);
     if (m) m.archived = !m.archived;
   });
@@ -301,7 +301,7 @@ export async function archiveMatch(matchId: string) {
 export async function addItineraryItem(form: FormData) {
   const item = String(form.get("item") || "").trim();
   if (!item) return;
-  mutate((store) => {
+  await mutate((store) => {
     if (store.me && !store.me.itinerary.includes(item)) store.me.itinerary.push(item);
   });
   revalidatePath("/itinerary");
@@ -309,14 +309,14 @@ export async function addItineraryItem(form: FormData) {
 }
 
 export async function removeItineraryItem(item: string) {
-  mutate((store) => {
+  await mutate((store) => {
     if (store.me) store.me.itinerary = store.me.itinerary.filter((i) => i !== item);
   });
   revalidatePath("/itinerary");
 }
 
 export async function adoptItineraryItem(item: string) {
-  mutate((store) => {
+  await mutate((store) => {
     if (store.me && !store.me.itinerary.includes(item)) store.me.itinerary.push(item);
   });
   revalidatePath("/itinerary");
@@ -327,14 +327,14 @@ export async function adoptItineraryItem(item: string) {
 export async function postToLounge(room: string, form: FormData) {
   const body = String(form.get("body") || "").trim();
   if (!body) return;
-  mutate((store) => {
+  await mutate((store) => {
     store.lounge.unshift({ id: uid("l"), room, author: "me", body, at: now(), hearts: 0 });
   });
   revalidatePath(`/lounge/${room}`);
 }
 
 export async function heartPost(postId: string, room: string) {
-  mutate((store) => {
+  await mutate((store) => {
     const p = store.lounge.find((x) => x.id === postId);
     if (p) p.hearts += 1;
   });
@@ -344,7 +344,7 @@ export async function heartPost(postId: string, room: string) {
 /* ---------------- danger zone ---------------- */
 
 export async function resetEverything() {
-  reset();
+  await reset();
   revalidatePath("/", "layout");
   redirect("/");
 }
