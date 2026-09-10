@@ -358,6 +358,8 @@ export function OnboardingForm() {
         </div>
       </section>
 
+      {step > 0 && !last && <button type="submit" className="btn btn-ghost btn-block">Skip remaining details and start discovering →</button>}
+
       <div className="row" style={{ gap: 12 }}>
         {step > 0 && (
           <button type="button" className="btn" onClick={() => setStep(step - 1)}>
@@ -370,7 +372,12 @@ export function OnboardingForm() {
             Print my boarding pass →
           </button>
         ) : (
-          <button type="button" className="btn btn-primary btn-lg" onClick={() => setStep(step + 1)}>
+          <button type="button" className="btn btn-primary btn-lg" onClick={(e) => {
+            const section = e.currentTarget.form?.querySelector("section:not([hidden])");
+            const inputs = section?.querySelectorAll<HTMLInputElement>("input");
+            if (inputs && !Array.from(inputs).every(input => input.reportValidity())) return;
+            setStep(step + 1);
+          }}>
             Continue →
           </button>
         )}

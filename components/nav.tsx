@@ -6,14 +6,14 @@ import { usePathname } from "next/navigation";
 const ITEMS = [
   {
     href: "/gates",
-    label: "Gates",
+    label: "Discover",
     icon: (
       <path d="M3 21h18M5 21V8l7-5 7 5v13M9 21v-6h6v6" />
     ),
   },
   {
     href: "/matches",
-    label: "Boarded",
+    label: "Matches",
     icon: (
       <path d="M20.8 5.6a5 5 0 0 0-7.1 0L12 7.3l-1.7-1.7a5 5 0 1 0-7.1 7.1l8.8 8.8 8.8-8.8a5 5 0 0 0 0-7.1Z" />
     ),
@@ -54,7 +54,7 @@ export function Nav({ unread }: { unread: number }) {
     <nav className="nav" aria-label="Main">
       <div className="nav-inner">
         {ITEMS.map((item) => {
-          const active = path === item.href || path.startsWith(item.href + "/");
+          const active = path === item.href || path.startsWith(item.href + "/") || (item.href === "/gates" && path.startsWith("/passengers/"));
           return (
             <Link
               key={item.href}

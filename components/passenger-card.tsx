@@ -116,7 +116,8 @@ export function PassengerCard({
         </div>
 
         {!compact && (
-          <div
+          <details
+            className="health-details"
             style={{
               border: "1px solid var(--paper-3)",
               borderRadius: 4,
@@ -124,7 +125,8 @@ export function PassengerCard({
               background: "var(--paper-2)",
             }}
           >
-            <div className="pass-label">Pre-flight check</div>
+            <summary>Health &amp; boundaries <span className="small">· Optional disclosures</span></summary>
+            <div style={{ marginTop: 14 }}>
             <div className="row wrap" style={{ gap: 8, marginBottom: 10 }}>
               <span className="tag tag-paper">
                 {tested ? `Last tested ${tested}` : "Testing not stated"}
@@ -148,7 +150,8 @@ export function PassengerCard({
                 “{p.preflight.note}”
               </p>
             )}
-          </div>
+            </div>
+          </details>
         )}
       </div>
 

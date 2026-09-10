@@ -33,40 +33,23 @@ export default async function Thread({ params }: { params: Promise<{ id: string 
   return (
     <div className="narrow stack" style={{ paddingTop: 20 }}>
       <Link href="/matches" className="mono small mute">
-        ← Boarded
+        ← Matches
       </Link>
 
       <div className="panel row" style={{ gap: 14, alignItems: "flex-start" }}>
         <Avatar seed={them.seed} name={them.name} size={54} />
         <div className="grow">
           <div className="row-between wrap" style={{ gap: 8 }}>
-            <strong style={{ fontSize: "1.1rem" }}>
-              {them.name}, {them.age}
-            </strong>
-            <StatusPill status={them.status} />
+            <Link href={`/passengers/${them.id}`} style={{ fontSize: "1.1rem", fontWeight: 600 }}>
+              {them.name}, {them.age} ↗
+            </Link>
+
           </div>
           <div className="small mute" style={{ marginTop: 4 }}>
-            {MOBILITY[them.mobility].label} · {c.miles} miles · best {decap(them.goodDays)}
+            Fictional passenger · {c.miles} miles away
           </div>
         </div>
       </div>
-
-      {them.preflight.immunocompromised && (
-        <div className="note note-red small">
-          <strong>{first} is immunocompromised.</strong> If you&apos;re unwell —
-          even mildly — say so and move to the phone. This is the single most
-          useful thing you can do for them.
-        </div>
-      )}
-
-      {them.status === "FINAL_CALL" && (
-        <div className="note small">
-          <strong>Final Call.</strong> {first} may not reply quickly, or at all,
-          and it very likely won&apos;t be about you. If you say you&apos;ll
-          visit, visit. If you can&apos;t keep it up, say that instead — it&apos;s
-          the kinder message and everyone here knows it.
-        </div>
-      )}
 
       <div className="thread">
         {msgs.map((m) => (

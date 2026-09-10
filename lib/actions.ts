@@ -178,6 +178,8 @@ export async function updateSettings(form: FormData) {
 export async function swipe(toId: string, direction: Direction) {
   const matched = await mutate((store) => {
     if (!store.me) return false;
+    if (!store.passengers.some(p => p.id === toId)) return false;
+    if (store.swipes.some(s => s.from === "me" && s.to === toId)) return false;
     store.swipes.push({ from: "me", to: toId, direction, at: now() });
     if (direction === "PASS") return false;
 
@@ -208,6 +210,7 @@ export async function swipe(toId: string, direction: Direction) {
 
   revalidatePath("/gates");
   revalidatePath("/matches");
+  revalidatePath(`/passengers/${toId}`);
   return matched;
 }
 
@@ -226,7 +229,7 @@ export async function undoLastSwipe() {
       }
     }
   });
-  revalidatePath("/gates");
+  revalidatePath("/", "layout");
 }
 
 /* ---------------- matches & chat ---------------- */

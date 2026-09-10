@@ -53,12 +53,19 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         </header>
 
         <main className="shell">
+          {me ? (
+            <details className="demo-disclosure">
+              <summary>Demo · Fictional people, scripted chats</summary>
+              <p>Use fictional personal and health details. Each visitor’s demo is separate; lounge posts are not shared. Clear your demo on My Pass.</p>
+            </details>
+          ) : (
           <p className="note small" style={{ marginTop: 20 }}>
             <strong>Interactive demo.</strong> All 16 passengers are fictional;
             matches are simulated and replies are scripted. Use fictional personal
             and health details. Your demo stays in this browser; lounge posts are
             not shared with other visitors. Clear it any time on My Pass.
           </p>
+          )}
           {children}
         </main>
 

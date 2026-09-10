@@ -69,12 +69,12 @@ await Promise.all([
 console.log("after submit ->", page.url().replace(B, ""));
 
 const gate = await page.evaluate(() => document.body.innerText);
-console.log("deck rendered a pass:", /left at this gate/i.test(gate));
+console.log("deck rendered a pass:", /people to discover/i.test(gate));
 
 await tap(".deck-actions .btn-primary");
 await wait(1400);
 const afterTicket = await page.evaluate(() => document.body.innerText);
-console.log("ticket -> match screen:", /ticketed you back/i.test(afterTicket));
+console.log("ticket -> match screen:", /It’s a match/i.test(afterTicket));
 
 await page.goto(`${B}/matches`, { waitUntil: "networkidle0" });
 const href = await page.$eval('a[href^="/matches/m_"]', (a) => a.getAttribute("href"));

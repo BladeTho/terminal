@@ -23,9 +23,9 @@ export default async function Gates() {
   const limited = store.settings.lowSpoons ? cards.slice(0, 3) : cards;
 
   return (
-    <div className="narrow stack-lg" style={{ paddingTop: 26 }}>
+    <div className="narrow stack-lg discovery-page">
       <div className="row-between wrap">
-        <Kicker>Departures · {store.me.city}</Kicker>
+        <div><Kicker>At the gates</Kicker><h1 style={{ margin: "4px 0 0" }}>Discover</h1></div>
         <Link href="/profile" className="mono small mute">
           within {store.settings.maxDistance} mi ↗
         </Link>
@@ -38,7 +38,7 @@ export default async function Gates() {
         </div>
       )}
 
-      <Deck cards={limited} />
+      <Deck cards={limited} canUndo={store.swipes.some(s => s.from === "me")} />
     </div>
   );
 }

@@ -86,11 +86,10 @@ export default async function Itinerary() {
                     {people.map((p) => (
                       <div key={p.id} className="row wrap" style={{ gap: 12 }}>
                         <Avatar seed={p.seed} name={p.name} size={36} />
-                        <span className="grow">
-                          {p.name}
+                        <Link href={`/passengers/${p.id}`} className="grow profile-name">
+                          {p.name} ↗
                           <span className="mute small"> · {p.city.split(",")[0]}</span>
-                        </span>
-                        <StatusPill status={p.status} />
+                        </Link>
                         {matchedIds.has(p.id) && (
                           <Link href="/matches" className="mono small" style={{ color: "var(--amber)" }}>
                             boarded ↗

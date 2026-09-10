@@ -32,11 +32,11 @@ export default async function Matches() {
 
   return (
     <div className="narrow stack-lg" style={{ paddingTop: 26 }}>
-      <Kicker>Boarded · {active.length} {active.length === 1 ? "connection" : "connections"}</Kicker>
+      <Kicker>Matches · {active.length} {active.length === 1 ? "connection" : "connections"}</Kicker>
 
       {layovers.length > 0 && (
         <section className="stack">
-          <div className="panel-head">Layovers booked</div>
+          <div className="panel-head">Date plans</div>
           {layovers.map(({ m, them }) => (
             <Link key={m.id} href={`/matches/${m.id}`} className="panel panel-tight row" style={{ gap: 14 }}>
               <Avatar seed={them.seed} name={them.name} size={44} />
@@ -51,7 +51,7 @@ export default async function Matches() {
           ))}
           {store.groundCrew?.shareLayovers && (
             <p className="small mute" style={{ margin: 0 }}>
-              {store.groundCrew.name} has the details for all of these.
+              Reminder: share these plans with {store.groundCrew.name} yourself if you choose.
             </p>
           )}
         </section>
@@ -84,7 +84,7 @@ export default async function Matches() {
                   <span className="mono small mute">{timeAgo(last?.at ?? m.at)}</span>
                 </div>
                 <div className="row wrap" style={{ gap: 8, margin: "6px 0" }}>
-                  <StatusPill status={them.status} />
+
                   {c.sharedItinerary.length > 0 && (
                     <span className="tag" data-hit="true">
                       ★ {c.sharedItinerary.length} shared
@@ -112,10 +112,9 @@ export default async function Matches() {
 
       {archived.length > 0 && (
         <section className="stack">
-          <div className="panel-head">Departed · {archived.length}</div>
+          <div className="panel-head">Archived · {archived.length}</div>
           <p className="small mute" style={{ marginTop: -6 }}>
-            Archived conversations. Nothing is deleted here — people come back to
-            these, and sometimes these are the only copy of a voice they have left.
+            Hidden from your active matches. This demo keeps up to 40 recent messages across chats.
           </p>
           {archived.map(({ m, them }) => (
             <Link key={m.id} href={`/matches/${m.id}`} className="panel panel-tight row" style={{ gap: 12, opacity: 0.65 }}>

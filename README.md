@@ -22,7 +22,10 @@ The demo notice appears before onboarding and throughout the app.
 - **Boarding status · Your circumstances:** optional, self-declared and editable.
   Private is the default; Uncertain is also available alongside On Time, Delayed,
   Standby, Boarding and Final Call. Nobody needs to estimate a prognosis.
-- **Gates · Browse:** profiles ranked by shared itinerary items, intentions,
+- **Discover · At the gates:** swipe left to pass or right to like, or use the
+  buttons. Compact portrait cards open full profiles at `/passengers/[id]`,
+  with health disclosures collapsed. Undo restores the previous choice.
+  Profiles are ranked by shared itinerary items, intentions,
   distance and meeting options. Everyday wishes receive the same weight as travel.
 - **Itinerary · Shared wishes:** quiet coffee, Sunday lunch, adventures and custom items.
 - **Layovers · Plan a date:** suggestions reflect both people's mobility. Two
@@ -56,6 +59,7 @@ My Pass deletes this browser's demo cookie, including profile, matches and chats
 ```bash
 npm run build
 npm run e2e
+npm run check:discovery
 npm run isolation
 npm run check:overflow
 ```

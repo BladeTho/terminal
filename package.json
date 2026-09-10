@@ -11,7 +11,8 @@
     "check:overflow": "node scripts/measure.mjs 320 / /gates /matches /itinerary /lounge /profile /onboarding",
     "shots": "node scripts/shots.mjs",
     "e2e": "node scripts/e2e.mjs",
-    "isolation": "node scripts/isolation.mjs"
+    "isolation": "node scripts/isolation.mjs",
+    "check:discovery": "node scripts/discovery.mjs"
   },
   "dependencies": {
     "next": "^15.5.25",
